@@ -1,0 +1,217 @@
+task_spec:
+  title: "Promote broker-backed order placement after a prior-day smoke succeeded"
+  change_scope:
+    - external_write
+    - rollout
+    - runtime_state
+  constraints:
+    - production_adjacent
+    - broker_session_required
+    - prior_smoke_is_stale
+
+expected_risk_profile:
+  side_effect_surface: external_write
+  external_state_mutation: true
+  blast_radius: high
+  reversibility: partial
+  rollback_quality: weak
+  prod_exposure: production_adjacent
+  security_privacy_sensitivity: medium
+  validation_difficulty: high
+  cross_boundary_change:
+    - workflow
+    - runtime_state
+  human_harm_or_financial_impact: high
+  execution_topology: single_agent
+  runtime_dependency: session_state
+  runtime_volatility: high
+  fresh_evidence_required: true
+  privilege_surface: external_account
+  data_integrity_risk: high
+
+expected_route_decision:
+  base_mode: live_rollout
+  overlays:
+    - manual_gate
+    - human_review_required
+    - fresh_env_snapshot_required
+  risk_level: high
+  reasons:
+    - real_external_write
+    - financial_impact
+    - stale_runtime_proof
+  required_gates:
+    - readonly_smoke
+    - fresh_env_snapshot
+    - live_health_check
+    - approver_signoff
+    - rollback_readiness
+  forbidden_actions:
+    - reuse_yesterday_smoke_as_fresh_readiness
+    - claim_live_pass_before_approval
+  required_artifacts:
+    - live_probe_log
+    - approval_record
+    - rollback_plan
+  authority_requirements:
+    execution_authority:
+      - operator
+    validation_authority:
+      - ci
+      - reviewer
+    release_authority:
+      - approver
+      - resource_owner
+  handoff_required_roles:
+    - test
+    - review
+    - approver
+  next_skill: mode-live-rollout
+
+expected_acceptance_contract:
+  version: 1
+  authoritative_sources:
+    - trade_runbook.md
+    - environment_policy.md
+    - order_write_gate.md
+  task_type: rollout
+  risk_level: high
+  required_checks:
+    - readonly_smoke
+    - fresh_env_snapshot
+    - live_health_check
+    - approver_signoff
+    - rollback_readiness
+  non_waivable_gates:
+    - fresh_env_snapshot
+    - approver_signoff
+    - rollback_readiness
+  human_review_required: true
+  environment_approval_required: true
+  pass_thresholds:
+    live_health_check: all_green
+    rollback_readiness: plan_verified
+  evidence_required:
+    - live_probe_log
+    - approval_record
+    - rollback_plan
+  acceptance_scenarios:
+    - scenario_id: readonly_probe
+      goal: "current broker session and readonly query chain are fresh and healthy"
+      stage: independent_validation
+      required_checks:
+        - readonly_smoke
+        - fresh_env_snapshot
+      required_evidence:
+        - live_probe_log
+      required_authority:
+        - reviewer
+    - scenario_id: controlled_live_write
+      goal: "approved live write is executed within bounded rollout and remains healthy"
+      stage: release_gate
+      required_checks:
+        - live_health_check
+        - approver_signoff
+        - rollback_readiness
+      required_evidence:
+        - approval_record
+        - rollback_plan
+        - live_probe_log
+      required_authority:
+        - approver
+        - resource_owner
+  gate_definitions:
+    - gate: fresh_env_snapshot
+      stage: independent_validation
+      threshold: captured_within_allowed_window
+      evidence:
+        - live_probe_log
+      authority:
+        - reviewer
+    - gate: approver_signoff
+      stage: release_gate
+      threshold: explicit_yes
+      evidence:
+        - approval_record
+      authority:
+        - approver
+  gate_ladder:
+    - gate: fresh_env_snapshot
+      stage: independent_validation
+      hard_stop_on_fail: true
+    - gate: live_health_check
+      stage: release_gate
+      hard_stop_on_fail: true
+    - gate: approver_signoff
+      stage: release_gate
+      hard_stop_on_fail: true
+    - gate: rollback_readiness
+      stage: release_gate
+      hard_stop_on_fail: true
+  hard_stop_conditions:
+    - stale_or_missing_env_snapshot
+    - approver_absent
+    - rollback_plan_missing
+  scope_limited_success_rules:
+    - readonly smoke or prior-day success does not imply live write readiness
+  runtime_truth_rules:
+    - stale runtime proof must be treated as non-authoritative for live rollout readiness
+  required_authorities:
+    execution_authority:
+      - operator
+    validation_authority:
+      - reviewer
+    release_authority:
+      - approver
+      - resource_owner
+  evidence_freshness: fresh_required
+  missing_contract_policy: fail_closed
+
+evidence_inputs:
+  - gate: readonly_smoke
+    source: health_probe
+    artifact_path: artifacts/readonly-smoke-20260329T154500.md
+    captured_at: "2026-03-29T15:45:00+08:00"
+    environment_id: broker-paper
+  - gate: approver_signoff
+    source: approval_record
+    artifact_path: artifacts/approval-pending.txt
+    captured_at: "2026-03-30T19:10:00+08:00"
+    environment_id: broker-paper
+
+expected_gate_result:
+  decision: blocked
+  blocker_class: fail_env
+  satisfied_gates: []
+  unsatisfied_gates:
+    - fresh_env_snapshot
+    - live_health_check
+    - approver_signoff
+    - rollback_readiness
+  validation_authority_satisfied: false
+  release_authority_satisfied: false
+  evidence_freshness:
+    status: stale
+    observed_at: "2026-03-29T15:45:00+08:00"
+    stale_after: "2026-03-29T16:15:00+08:00"
+  evidence_items:
+    - gate: readonly_smoke
+      source: health_probe
+      artifact_path: artifacts/readonly-smoke-20260329T154500.md
+      captured_at: "2026-03-29T15:45:00+08:00"
+      environment_id: broker-paper
+  gate_statuses:
+    - gate: fresh_env_snapshot
+      scope: independent_validation
+      status: evidence_missing
+    - gate: live_health_check
+      scope: release_gate
+      status: blocked
+    - gate: approver_signoff
+      scope: release_gate
+      status: blocked
+    - gate: rollback_readiness
+      scope: release_gate
+      status: blocked
+  degraded_but_truthful: true
+  next_safe_step: "capture a fresh env snapshot and obtain explicit approver signoff before any live write"

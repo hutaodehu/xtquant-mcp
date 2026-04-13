@@ -1,0 +1,7 @@
+interface:
+  display_name: "Spec Task Harness"
+  short_description: "Run TaskCard-driven controller loops"
+  default_prompt: "Use $spec-task-harness to reconcile repo artifacts, assess task state, and propose the next safe controller action."
+
+policy:
+  allow_implicit_invocation: false

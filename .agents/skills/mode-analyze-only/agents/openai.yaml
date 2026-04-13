@@ -1,0 +1,7 @@
+interface:
+  display_name: "Analyze Only Mode"
+  short_description: "Run safe read-only planning work"
+  default_prompt: "Use $mode-analyze-only to perform read-only analysis when the contract is missing or the task is not yet safe to execute."
+
+policy:
+  allow_implicit_invocation: false

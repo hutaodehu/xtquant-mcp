@@ -1,0 +1,15 @@
+task_spec:
+  title: "Clarify README setup steps"
+  change_scope:
+    - docs
+  notes:
+    - no code changes
+    - no policy or safety boundary change
+expected_route_decision:
+  base_mode: fast_loop
+  overlays: []
+  required_gates:
+    - local_consistency_check
+expected_gate_result:
+  decision: provisional_pass_for_local_iteration
+  blocker_class: none

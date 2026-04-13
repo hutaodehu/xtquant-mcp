@@ -1,0 +1,24 @@
+task_spec:
+  title: "Revise an operator runbook so it changes who may approve a production-adjacent write"
+  change_scope:
+    - docs
+    - workflow
+    - auth
+  constraints:
+    - no_code_changes
+    - doc_is_authoritative_operator_source
+    - changes_approval_boundary
+    - changes_release_boundary
+
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - human_review_required
+  required_gates:
+    - policy_conflict_check
+    - scenario_review
+    - independent_review
+
+expected_gate_result:
+  decision: blocked
+  blocker_class: evidence_missing

@@ -1,0 +1,19 @@
+task_spec:
+  title: "Change tool routing and permission hints for agent runtime"
+  change_scope:
+    - workflow
+    - auth
+  constraints:
+    - affects tool selection
+    - affects permission boundary
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - human_review_required
+  required_gates:
+    - eval_tool_selection
+    - eval_handoff
+    - independent_review
+expected_gate_result:
+  decision: blocked
+  blocker_class: evidence_missing

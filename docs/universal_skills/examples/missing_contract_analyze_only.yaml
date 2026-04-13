@@ -1,0 +1,16 @@
+task_spec:
+  title: "Implement unclear feature from chat only"
+  change_scope:
+    - unknown
+  constraints:
+    - no formal acceptance
+    - no repo policy reference
+expected_route_decision:
+  base_mode: analyze_only
+  overlays:
+    - contract_missing
+  required_gates:
+    - clarify_authoritative_sources
+expected_gate_result:
+  decision: not_authoritative_due_to_missing_contract
+  blocker_class: policy_missing

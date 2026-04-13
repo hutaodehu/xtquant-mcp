@@ -1,0 +1,18 @@
+task_spec:
+  title: "Refactor shared caching layer across packages"
+  change_scope:
+    - workflow
+    - runtime_state
+  constraints:
+    - rollback confidence medium
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - human_review_required
+  required_gates:
+    - unit
+    - integration
+    - ci_status_checks
+expected_gate_result:
+  decision: blocked
+  blocker_class: evidence_missing

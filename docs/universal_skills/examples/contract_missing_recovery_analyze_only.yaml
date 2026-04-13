@@ -1,0 +1,25 @@
+task_spec:
+  title: "Prepare a shared agent-routing change when no authoritative acceptance contract exists yet"
+  change_scope:
+    - workflow
+    - auth
+  constraints:
+    - no_formal_acceptance
+    - recovery_sources_available
+expected_route_decision:
+  base_mode: analyze_only
+  overlays:
+    - contract_missing
+  required_gates:
+    - authoritative_source_inventory
+    - contract_normalization
+    - owner_confirmation
+expected_recovery_checklist:
+  - collect task-level acceptance text
+  - collect repo policy and CI gate definitions
+  - identify reviewer and approver ownership
+  - restate the task in acceptance scenarios
+  - rerun acceptance-analysis once the sources are versioned
+expected_gate_result:
+  decision: not_authoritative_due_to_missing_contract
+  blocker_class: policy_missing

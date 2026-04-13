@@ -1,0 +1,20 @@
+task_spec:
+  title: "Decide whether to package the universal suite as a Codex plugin right now"
+  change_scope:
+    - workflow
+    - docs
+  constraints:
+    - packaging_target_unverified
+    - adapter_not_stable
+    - plugin_surface_not_publicly_stable
+expected_route_decision:
+  base_mode: analyze_only
+  overlays:
+    - manual_gate
+  required_gates:
+    - public_plugin_surface_verified
+    - adapter_stability_review
+    - runtime_entrypoint_review
+expected_gate_result:
+  decision: blocked
+  blocker_class: policy_missing

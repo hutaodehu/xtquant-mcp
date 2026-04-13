@@ -1,0 +1,23 @@
+task_spec:
+  title: "Delegate remote production-adjacent write task to a background agent"
+  change_scope:
+    - external_write
+    - rollout
+  constraints:
+    - production_adjacent
+    - remote_execution_requested
+    - non_interactive_background_execution
+expected_route_decision:
+  base_mode: live_rollout
+  overlays:
+    - background_agent_allowed
+    - manual_gate
+    - human_review_required
+  required_gates:
+    - audited_execution_plan
+    - environment_approval
+    - live_health_check
+    - rollback_readiness
+expected_gate_result:
+  decision: blocked
+  blocker_class: approval_missing

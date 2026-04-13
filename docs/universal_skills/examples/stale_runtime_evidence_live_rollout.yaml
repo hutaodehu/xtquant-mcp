@@ -1,0 +1,22 @@
+task_spec:
+  title: "Promote broker write path using yesterday's runtime evidence"
+  change_scope:
+    - external_write
+    - runtime_state
+  constraints:
+    - production_adjacent
+    - stale_runtime_evidence_present
+    - broker_session_required
+expected_route_decision:
+  base_mode: live_rollout
+  overlays:
+    - manual_gate
+    - fresh_env_snapshot_required
+  required_gates:
+    - fresh_env_snapshot
+    - live_health_check
+    - approver_signoff
+    - rollback_readiness
+expected_gate_result:
+  decision: blocked
+  blocker_class: fail_env

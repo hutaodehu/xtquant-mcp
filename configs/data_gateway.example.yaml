@@ -1,0 +1,51 @@
+server:
+  server_name: xtqmtDataGateway
+  server_version: 2.0.0a0
+  protocol_version: "2025-03-26"
+
+runtime:
+  python_home: C:\Python313\python.exe
+  venv_path: D:\xtquant-mcp\venv313
+
+paths:
+  config_root: D:\xtquant-mcp\instance\prod\config
+  logs_root: D:\xtquant-mcp\instance\prod\logs
+  state_root: D:\xtquant-mcp\instance\prod\state
+  artifact_root: D:\xtquant-mcp\instance\prod\artifacts
+
+bundle:
+  bundle_root: D:\xtquant-mcp\vendor\xtquant_250807
+  abi_tag: cp313-win_amd64
+  package_dir_name: xtquant
+  pth_filename: xtquant_vendor.pth
+
+qmt:
+  account_id: ""
+  qmt_exe: D:\path\to\XtMiniQmt.exe
+  qmt_userdata: D:\path\to\userdata_mini
+  credential_target: xtqmt/miniqmt/default
+  xtdata_host: 127.0.0.1
+  xtdata_port: 58610
+
+transport:
+  bind_host: 127.0.0.1
+  bind_port: 8766
+  mcp_path: /mcp
+  health_path: /healthz
+  protocol_version_http: "2025-03-26"
+  allow_origin_hosts:
+    - 127.0.0.1
+    - localhost
+    - ::1
+
+audit:
+  enabled: true
+  call_log_root: D:\xtquant-mcp\instance\prod\artifacts\data_gateway
+  call_log_name: data_gateway_calls.jsonl
+
+data:
+  jobs_root: D:\xtquant-mcp\instance\prod\state\data_jobs
+  subscriptions_root: D:\xtquant-mcp\instance\prod\state\subscriptions
+  download_root: D:\xtquant-mcp\instance\prod\artifacts\data_downloads
+  max_concurrent_jobs: 1
+  max_query_symbols: 200

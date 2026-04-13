@@ -1,0 +1,18 @@
+task_spec:
+  title: "Adjust public REST response field"
+  change_scope:
+    - api
+    - docs
+  constraints:
+    - shared clients affected
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - human_review_required
+  required_gates:
+    - contract
+    - ci_status_checks
+    - independent_review
+expected_gate_result:
+  decision: blocked
+  blocker_class: evidence_missing

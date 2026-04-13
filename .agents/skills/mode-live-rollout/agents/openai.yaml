@@ -1,0 +1,7 @@
+interface:
+  display_name: "Live Rollout Mode"
+  short_description: "Prepare a controlled live rollout"
+  default_prompt: "Use $mode-live-rollout to handle production-adjacent or live-risk changes with approvals, health checks, and rollback readiness."
+
+policy:
+  allow_implicit_invocation: false

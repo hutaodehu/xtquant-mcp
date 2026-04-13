@@ -1,0 +1,7 @@
+interface:
+  display_name: "Workflow Router"
+  short_description: "Classify tasks into delivery modes"
+  default_prompt: "Use $workflow-router to classify a task, derive its risk profile, and choose the right delivery mode."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,35 @@
+{
+  "board_name": "xtquant-mcp-runledger",
+  "schema_version": "1.0",
+  "exported_at": "2026-03-30T07:10:00+08:00",
+  "tasks": [
+    {
+      "task_id": "DG-001",
+      "status": "Accepted",
+      "owner_role": "review",
+      "current_role": "review",
+      "blocking_reason": "",
+      "review_result": "pass",
+      "claimed_by": "",
+      "claim_run_id": "",
+      "change_package_link": "docs/change_packages/DG-001.md",
+      "evidence_pack_link": "docs/evidence_packs/DG-001-test-202603292240.md",
+      "review_pack_link": "docs/reviews/DG-001-review-202603300706.md",
+      "env_snapshot_link": "docs/env_snapshots/DG-001-test-202603292240.md"
+    },
+    {
+      "task_id": "VAL-002",
+      "status": "Blocked",
+      "owner_role": "test",
+      "current_role": "test",
+      "blocking_reason": "env_blocked",
+      "review_result": "blocked",
+      "claimed_by": "",
+      "claim_run_id": "",
+      "change_package_link": "docs/change_packages/VAL-002.md",
+      "evidence_pack_link": "docs/evidence_packs/VAL-002-test-202603300306.md",
+      "review_pack_link": "docs/reviews/VAL-002-review-202603300701.md",
+      "env_snapshot_link": "docs/env_snapshots/VAL-002-test-202603300306.md"
+    }
+  ]
+}

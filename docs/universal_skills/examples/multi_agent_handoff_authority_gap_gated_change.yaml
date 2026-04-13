@@ -1,0 +1,22 @@
+task_spec:
+  title: "Continue a multi-agent shared change without a clear validation and release handoff"
+  change_scope:
+    - workflow
+    - docs
+  constraints:
+    - multi_agent_handoff
+    - shared_change
+    - authority_boundary_unclear
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - multi_agent_allowed
+    - human_review_required
+  required_gates:
+    - handoff_contract
+    - authority_matrix
+    - eval_handoff
+    - independent_review
+expected_gate_result:
+  decision: blocked
+  blocker_class: fail_design

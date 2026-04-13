@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+dist/
+build/
+*.egg-info/
+.venv*/
+
+# Instance/runtime data lives outside the repo.
+
+.playwright-mcp/
+.tmp/
+instance/
+output/
+state/

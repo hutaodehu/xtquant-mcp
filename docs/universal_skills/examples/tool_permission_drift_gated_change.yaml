@@ -1,0 +1,21 @@
+task_spec:
+  title: "Update tool routing while permission policy and tool schema have drifted"
+  change_scope:
+    - workflow
+    - auth
+  constraints:
+    - affects tool selection
+    - affects permission boundary
+    - contract_and_runtime_mapping_diverged
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - human_review_required
+  required_gates:
+    - contract
+    - eval_tool_selection
+    - permission_boundary_review
+    - independent_review
+expected_gate_result:
+  decision: blocked
+  blocker_class: fail_design

@@ -1,0 +1,20 @@
+task_spec:
+  title: "Enable real order placement path"
+  change_scope:
+    - external_write
+    - financial_impact
+  constraints:
+    - broker_session_required
+    - production_adjacent
+expected_route_decision:
+  base_mode: live_rollout
+  overlays:
+    - manual_gate
+    - fresh_env_snapshot_required
+  required_gates:
+    - live_health_check
+    - approver_signoff
+    - rollback_readiness
+expected_gate_result:
+  decision: blocked
+  blocker_class: approval_missing

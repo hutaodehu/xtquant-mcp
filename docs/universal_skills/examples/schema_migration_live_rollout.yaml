@@ -1,0 +1,20 @@
+task_spec:
+  title: "Apply production schema migration"
+  change_scope:
+    - persistence
+    - rollout
+  constraints:
+    - external_state_mutation
+    - production_adjacent
+expected_route_decision:
+  base_mode: live_rollout
+  overlays:
+    - human_review_required
+    - manual_gate
+  required_gates:
+    - migration_plan
+    - environment_approval
+    - rollback_readiness
+expected_gate_result:
+  decision: blocked
+  blocker_class: approval_missing

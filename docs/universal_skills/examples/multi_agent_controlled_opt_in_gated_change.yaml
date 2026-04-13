@@ -1,0 +1,21 @@
+task_spec:
+  title: "Split shared routing policy update into schema work and manual work under a controller"
+  change_scope:
+    - workflow
+    - docs
+  constraints:
+    - multi_agent_handoff
+    - disjoint_write_sets
+    - controller_defined_handoff_contract
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - multi_agent_allowed
+    - human_review_required
+  required_gates:
+    - handoff_contract
+    - independent_review
+    - contract_alignment
+expected_gate_result:
+  decision: ready_for_independent_validation
+  blocker_class: none

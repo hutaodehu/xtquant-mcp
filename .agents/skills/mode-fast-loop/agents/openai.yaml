@@ -1,0 +1,7 @@
+interface:
+  display_name: "Fast Loop Mode"
+  short_description: "Run TDD-style local iteration"
+  default_prompt: "Use $mode-fast-loop to execute a low-risk local change with TDD and deterministic local checks."
+
+policy:
+  allow_implicit_invocation: false

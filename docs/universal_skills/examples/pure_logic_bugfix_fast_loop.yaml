@@ -1,0 +1,14 @@
+task_spec:
+  title: "Fix pure function rounding bug"
+  change_scope:
+    - internal_logic
+  constraints:
+    - deterministic unit tests available
+expected_route_decision:
+  base_mode: fast_loop
+  overlays: []
+  required_gates:
+    - unit
+expected_gate_result:
+  decision: ready_for_independent_validation
+  blocker_class: none

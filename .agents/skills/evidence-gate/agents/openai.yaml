@@ -1,0 +1,7 @@
+interface:
+  display_name: "Evidence Gate"
+  short_description: "Judge evidence against required gates"
+  default_prompt: "Use $evidence-gate to compare current evidence against the acceptance contract and report the gate result."
+
+policy:
+  allow_implicit_invocation: false

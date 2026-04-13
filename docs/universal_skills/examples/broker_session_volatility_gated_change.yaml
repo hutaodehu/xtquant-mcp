@@ -1,0 +1,22 @@
+task_spec:
+  title: "Refactor shared broker session recovery under volatile reconnect behavior"
+  change_scope:
+    - workflow
+    - runtime_state
+  constraints:
+    - shared_runtime_component
+    - broker_session_required
+    - runtime_state_is_volatile
+expected_route_decision:
+  base_mode: gated_change
+  overlays:
+    - human_review_required
+    - fresh_env_snapshot_required
+  required_gates:
+    - integration
+    - fresh_env_snapshot
+    - runtime_probe
+    - independent_review
+expected_gate_result:
+  decision: blocked
+  blocker_class: fail_env

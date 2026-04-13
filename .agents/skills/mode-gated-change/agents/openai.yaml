@@ -1,0 +1,7 @@
+interface:
+  display_name: "Gated Change Mode"
+  short_description: "Prepare a reviewable shared change"
+  default_prompt: "Use $mode-gated-change to deliver a shared change under explicit review and validation gates."
+
+policy:
+  allow_implicit_invocation: false

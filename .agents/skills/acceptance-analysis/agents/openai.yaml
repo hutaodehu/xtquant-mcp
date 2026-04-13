@@ -1,0 +1,7 @@
+interface:
+  display_name: "Acceptance Analysis"
+  short_description: "Load contracts and required gates"
+  default_prompt: "Use $acceptance-analysis to load acceptance sources, identify required gates, and surface missing contract coverage."
+
+policy:
+  allow_implicit_invocation: false
