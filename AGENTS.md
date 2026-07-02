@@ -1,121 +1,111 @@
-# Repository Guidelines
+# xtqmt-mcp 公开仓 Agent 协作指南
 
-本仓库面向 Windows 本机 `xtquant` / MiniQMT MCP 网关协作开发。默认目标不是单人脚本式推进，而是让开发、测试、审查 agent 按统一规则交接、复核和放行。
+本文件适用于公开源码仓 `D:\xtquant-mcp\repo`。它约束 agent 在公开仓内读写代码、文档、测试和 release 文件时的行为。实际运行环境总目录 `D:\xtquant-mcp` 另有本机级 `AGENTS.md` 和 `docs/RUNTIME_ENVIRONMENT_STANDARD.md`。
+
+## 基本规则
+
+1. 所有面向用户的回复和项目文档使用中文。
+2. 先理解相关代码、配置和文档，再修改。
+3. 只改与当前任务直接相关的文件，避免顺手重构。
+4. 涉及功能边界、配置、启动流程、验收口径变化时，必须同步更新公开文档。
+5. 不提交真实账号、凭据、MiniQMT 路径、userdata、交易证据、本机日志、截图、SQLite、运行态 latest 文件或私有归档内容。
+6. 发布、改远端 `main`、移动 tag、创建 GitHub Release 或修改仓库可见性，必须有用户明确授权。
+
+## 仓库结构
+
+| 路径 | 职责 |
+| --- | --- |
+| `xtqmt_mcp/` | MCP 服务实现、配置模型、Data Gateway、Trade Gateway、MiniQMT 登录和交易门禁 |
+| `configs/` | 公开样例配置，不写真实账户或真实路径 |
+| `scripts/` | 启动、wake、bundle 校验、flow-smoke 和辅助脚本 |
+| `tests/` | 单元测试、契约测试和公开样例验证 |
+| `docs/` | 公开设计、运行手册、验收标准、当前状态和 release 文档 |
+| `docs/release/` | 开源整理、归档、冻结和验证记录 |
 
 ## 文档入口
 
-- live 运维与 blocker 恢复：`docs/OPERATIONS_RUNBOOK.md`
-- 执行与工件规范：`docs/EXECUTION_AND_ARTIFACT_STANDARD.md`
-- 协作与看板规则：`docs/WORKFLOW_AND_BOARD.md`
+- 项目入口：`README.md`
+- 运行手册：`docs/OPERATIONS_RUNBOOK.md`
+- MCP 设计：`docs/MCP_DESIGN.md`
 - 验收标准：`docs/ACCEPTANCE_STANDARD.md`
-- 模板：`docs/TEMPLATES.md`
-- 首轮任务拆分：`docs/FIRST_WAVE_TASK_BREAKDOWN.md`
-- 当前设计：`docs/MCP_DESIGN.md`
 - 当前状态：`docs/CURRENT_STATUS.md`
-- 设计审查：`docs/DESIGN_REVIEW_20260327.md`
+- 发布记录：`docs/release/`
 
-## 角色分工
+## 隐私和公开边界
 
-### 开发 Agent
+公开仓只允许保留：
 
-- 负责实现、重构、自测和提交实现说明。
-- 不负责宣布最终通过。
-- 必须输出：ChangePack、变更摘要、自测步骤、已知风险、待独立测试点、证据路径。
+1. 源码和测试。
+2. 脱敏公开文档。
+3. 样例配置。
+4. 合成账户，例如 `ACC001`。
+5. 合成证券代码，例如 `SAMPLE001.SH`。
+6. 示例路径，例如 `C:\xtquant-mcp-example\...`。
 
-### 测试 Agent
+公开仓禁止保留：
 
-- 负责按统一验收标准做独立验证。
-- 不改需求口径，不替开发补设计决策。
-- 必须输出：测试范围、执行步骤、EvidencePack、结果、证据路径、失败分类、最终结论。
+1. 真实账户、真实资金、真实持仓、真实委托和真实成交。
+2. 真实 broker 回执、订单号和现场交易证据。
+3. 本机真实路径、MiniQMT userdata、截图、SQLite、日志和缓存。
+4. 内部计划、内部规格、现场 task card、review pack 和 evidence pack 原文。
+5. `.tmp/`、`instance/`、`output/`、`state/`、`.pytest_cache/` 等运行态目录。
 
-### 审查 Agent
+## 配置规则
 
-- 负责设计一致性、实现风险、文档一致性和放行判断。
-- 主要关注：错误心智模型、回归风险、缺失测试、误导 agent 的接口契约。
-- 必须输出：ReviewPack、findings、严重度、影响、 required fix、release decision、必要的回退状态建议。
+1. `configs/*.example.yaml` 只能包含示例路径和占位账户。
+2. 真实配置应放在本机运行环境私有目录，例如 `D:\xtquant-mcp\instance\prod\config\`，不得提交。
+3. 端口默认可以为 `0`，由运行时解析；不得把某个本机端口写成协议常量。
+4. `flow_smoke` 配置只能代表非生产验证，不代表真实交易可用。
 
-## 主控与编排
+## Data Gateway 口径
 
-- 主控负责读取任务卡、分派单卡、汇总 ChangePack 与 EvidencePack，并更新外部看板。
-- 主控可以由人工或单独窗口承担，但不作为额外看板角色枚举；看板中的 `Owner Role` 和 `Current Role` 仍固定为 `dev`、`test`、`review`。
-- 默认推荐使用“单主控 + 多角色 agent”模式，不推荐长期依赖人工多开窗口、口头协调职责。
-- 主控只支持两种工作模式：`controller-only` 与 `controller-with-delegation`。
-- `controller-only` 表示主控默认只做 reconcile、判断、派单文本和收口建议，不直接执行 `dev`、`test`、`review` 的角色工作。
-- `controller-with-delegation` 表示主控在显式授权多 agent 编排时，可以把边界清晰的单步任务派给子代理执行，但主控自己仍不得代做该角色的工件。
-- `controller direct test execution` 不是第三种主控模式，而是任务卡级别的受控执行策略；只在 `Controller Test Policy: controller_direct_required` 且同时满足 `Automation Policy: manual_gate`、`Execution Class: test_only`、`Risk Class: high` 时允许。
-- 该受控策略只豁免 `test`，不豁免 `dev` / `review`；主控仍不得代做开发实现或独立审查。
-- 主控亲测时，正式工件仍写 `Role: test`，但必须显式写出 `Executor: controller direct test execution`、`Authorization Basis`、`Controller Judgment Link`、`Raw Runtime Capture`、`Gateway Recovery Output Link`。
-- 只要使用子代理，模型门槛 `MUST` 不低于 `gpt-5.4` 且 `reasoning_effort` 不低于 `high`；低于该门槛的子代理不得用于本仓库正式执行流。
-- 外部看板 / RunLedger 同步属于主控职责，本身不视为 `dev`、`test`、`review` 的角色替代。
-- 只要同步依据来自既有 `ChangePack`、`EvidencePack`、`ReviewPack`、`EnvSnapshot` 和明确的 controller judgment，主控 `SHOULD` 直接完成账本同步，而不是反复把“是否同步”抛回给用户。
-- 主控 `MUST NOT` 亲自补写 `ChangePack`、`EvidencePack`、`EnvSnapshot`、`ReviewPack` 来冒充子代理已经执行；若属于受控 `controller direct test execution`，则必须由主控作为真实执行者产出带完整 metadata 的 `Role: test` 工件，而不是伪装成子代理结果。
-- 本仓库不采用“主控自己临时代演 `dev` / `test` / `review`”作为通用机制；唯一例外是上述受控 live test 卡的 `controller direct test execution`，且该例外不改变独立 review authority。
+1. `gateway.health` 是 Data Gateway readiness 的主要入口。
+2. TCP 端口可连不等于 gateway ready。
+3. 交易日解析不能静默把非交易日映射到前一交易日。
+4. qlib 同步必须通过 manifest 和 acceptance 结果闭环。
+5. 边界残差和真实失败要在 payload 中区分。
 
-## 通用协作规则
+## Trade Gateway 口径
 
-- Windows 命令优先使用 `pwsh`。
-- WSL 或其他 agent 环境不直接 `import xtquant`，统一通过本机 MCP 网关访问能力。
-- 所有结论必须区分 `设计问题` 和 `环境问题`，禁止混写。
-- 没有证据就不能写“通过”。证据至少包括命令、时间、结果和 artifact 路径。
-- 没有完成独立测试前，开发输出只能写“自测通过”，不能写“验收通过”。
-- 没有完成审查前，测试输出只能写“测试通过”，不能写“设计放行”。
-- `README.md`、`AGENTS.md`、`docs/**/*.md` 属于源文档，功能边界变更后要同步更新。
-- 任务流转以外部看板为主，但规则和标准以仓库文档为准。
-- 看板是 ledger，不是 artifact 本体；正式执行必须有 TaskCard、ChangePack 和 EvidencePack 的可追溯链路。
-- `docs/reviews/*.md` 是正式 ReviewPack，不再把审查记录只当聊天摘要或看板评论。
-- 高副作用或跨宿主任务应补充 `EnvSnapshot`，避免把环境问题误判成设计问题。
-- 多 agent 并行只有在任务切分清晰、写集不重叠、共享账本明确时才允许；高副作用写路径默认串行推进。
+1. 真实写路径只能通过正式 gateway 工具面执行。
+2. `order.place` 和 `order.cancel` 必须经过 kill switch、session、probe、风险、交易时段和审计门禁。
+3. `session.warm`、`session.status`、`probe.connection` 是写路径前置诊断入口。
+4. 不允许手工编辑 latest state 文件制造 ready 状态。
+5. 不允许把 `flow_smoke` 结果解释为真实 broker 成交。
 
-## 通用 suite adapter 边界
+## 验证要求
 
-- 当前仓库对通用 adapter 字段的 repo-local 映射，以 `TaskCard`、`ChangePack`、`EvidencePack`、`ReviewPack`、`EnvSnapshot` 和其显式回链 artifact 为正式 carrier。
-- 外部看板 / `RunLedger`、`Board Export`、`Board Sync` 和 controller judgment 属于 ledger 或 control-plane，不替代上述角色工件。
-- `TaskCard.Status`、board `Status`、board `Review Result` 只能镜像状态，不自动生成 `validation_authority` 或 `release_authority`。
-- 若某类 runtime evidence、resource evidence 或 external approval 还没有稳定 carrier，必须在仓库文档或角色工件中显式登记 gap，不能默认为“后续自然补齐”。
-- 通用 suite 的 `controller-only` / `controller-with-delegation` 相关描述，只能解释主控如何编排，不改变当前仓库 `dev`、`test`、`review` 的 authority 分工。
-- `Controller Test Policy` 只决定某张高风险 live test 卡能否使用主控亲测入口，不会创建新的看板角色，也不会把 controller judgment 升格成 release authority。
+普通代码或配置变更至少运行：
 
-## 任务交接要求
+```bash
+python -m compileall xtqmt_mcp scripts
+python -m unittest discover -s tests -v
+git diff --check
+```
 
-### 开发到测试
+文档变更至少运行：
 
-- 关联任务卡 ID。
-- 附带 ChangePack 路径。
-- 说明变更目标和范围。
-- 标明是否触及交易写路径、会话模型、端口模型、订阅模型。
-- 给出最小可复现验证步骤。
-- 给出已知未覆盖风险。
+```bash
+git diff --check -- <changed-docs>
+rg -n -I "<LOCAL_PRIVATE_PATH>|<REAL_ACCOUNT>|<CREDENTIAL_PATTERN>" <changed-docs>
+```
 
-### 测试到审查
+如果本机环境无法运行完整测试，必须在交付说明中写明原因，并给出已经执行的最小验证。
 
-- 关联任务卡 ID。
-- 附带 EvidencePack 路径。
-- 明确验收使用的标准版本。
-- 明确结论：`pass`、`partial`、`blocked`、`fail_env`、`fail_design`。
-- 附带所有证据路径。
+## Git 操作要求
 
-### 审查到放行
+1. 不使用 `git add .` 吞入无关文件。
+2. 提交前查看 `git status --short --branch` 和 `git diff --cached --name-status`。
+3. 不回滚用户已有改动，除非用户明确要求。
+4. 不删除或重写远端历史，除非用户明确授权。
+5. 修改 release tag 或 GitHub Release 后，必须重新核对远端 tag、Release 附件和 SHA256。
 
-- 明确是否可放行。
-- 明确必须回流的修复项。
-- 若为 `blocked`，必须说明是设计阻断还是环境阻断。
-- 若需回退状态，明确回退到 `In Dev`、`In Independent Test` 或 `Blocked`。
+## 交付说明
 
-## 结果词汇
+交付时说明：
 
-统一使用以下结论词：
-
-- `pass`
-- `partial`
-- `blocked`
-- `fail_env`
-- `fail_design`
-
-禁止自行发明近义词替代，例如“基本通过”“大致可用”“差不多完成”。
-
-## MCP 与 xtquant 特殊约束
-
-- `xtdata` 端口不得在文档里被描述成稳定常量，只能写成实例状态或配置项。
-- `session_id` 不得被描述成官方固定模板，只能写成服务端管理的冲突资源。
-- 写路径必须明确标出所有前置 gate，不能把只读探测和写权限判断混为一谈。
-- 实例目录中的 fake 状态、测试残留和真实产物必须可区分，不能混作验收证据。
+1. 修改了哪些文件。
+2. 为什么修改。
+3. 执行了哪些验证。
+4. 是否影响公开仓、运行环境、release tag 或 GitHub Release。
+5. 是否存在遗留风险或未处理的本机私有目录。
