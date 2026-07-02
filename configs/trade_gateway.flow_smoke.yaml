@@ -1,0 +1,90 @@
+server:
+  server_name: xtqmtTradeGateway
+  server_version: 2.0.0a1
+  protocol_version: "2025-03-26"
+
+runtime:
+  python_home: C:\Python313\python.exe
+  venv_path: C:\xtquant-mcp-example\venv313
+
+paths:
+  config_root: configs
+  logs_root: .tmp/trade_flow_smoke/logs
+  state_root: .tmp/trade_flow_smoke/state
+  artifact_root: .tmp/trade_flow_smoke/artifacts
+
+bundle:
+  bundle_root: C:\xtquant-mcp-example\vendor\xtquant_250807
+  abi_tag: cp313-win_amd64
+  package_dir_name: xtquant
+  pth_filename: xtquant_vendor.pth
+
+qmt:
+  account_id: "ACC001"
+  qmt_exe: ""
+  qmt_userdata: ""
+  credential_target: ""
+  xtdata_host: 127.0.0.1
+  xtdata_port: 0
+
+transport:
+  bind_host: 127.0.0.1
+  bind_port: 18765
+  mcp_path: /mcp
+  health_path: /healthz
+  protocol_version_http: "2025-03-26"
+  allow_origin_hosts:
+    - 127.0.0.1
+    - localhost
+    - ::1
+
+audit:
+  enabled: true
+  call_log_root: .tmp/trade_flow_smoke/artifacts/trade_gateway
+  call_log_name: trade_gateway_calls.jsonl
+
+trade:
+  account_id: "ACC001"
+  auto_account: false
+  execution_mode: flow_smoke
+  output_dir: .tmp/trade_flow_smoke/artifacts/trade_ops
+  state_dir: .tmp/trade_flow_smoke/state/trade_ops
+  qmt_exe: ""
+  qmt_userdata: ""
+  session_id: 1111
+  session_candidates:
+    - 1111
+  register_callback: false
+  connect_cooldown_seconds: 0.0
+  enforce_connect_precheck: false
+  require_up_queue_file: false
+  enable_derived_session_fallback: false
+  max_session_attempts: 1
+  connect_retries: 1
+  connect_retry_interval_seconds: 0.0
+  wake_wait_seconds: 1
+  require_connect_stage: false
+  require_subscribe_stage: false
+  require_snapshot_stage: false
+  snapshot_requires_position: false
+  allow_non_online_t0: true
+  idle_timeout_seconds: 5.0
+  enforce_trading_session: false
+  pretrade_connect_window: 1
+  pretrade_connect_threshold: 0.0
+  pretrade_connect_interval_seconds: 0.0
+  price_mode: fixed
+  risk_max_single_order_notional: 200000.0
+  risk_max_daily_notional: 2000000.0
+  risk_white_list: []
+  kill_switch_file: .tmp/trade_flow_smoke/control/trade_kill_switch.flag
+
+login:
+  account_id: "ACC001"
+  qmt_exe: ""
+  qmt_userdata: ""
+  credential_target: ""
+  login_timeout_seconds: 1
+  startup_grace_seconds: 0
+  port_host: 127.0.0.1
+  port_num: 0

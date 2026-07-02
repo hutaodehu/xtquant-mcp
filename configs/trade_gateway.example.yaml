@@ -1,0 +1,91 @@
+server:
+  server_name: xtqmtTradeGateway
+  server_version: 2.0.0a1
+  protocol_version: "2025-03-26"
+
+runtime:
+  python_home: C:\Python313\python.exe
+  venv_path: C:\xtquant-mcp-example\venv313
+
+paths:
+  config_root: C:\xtquant-mcp-example\instance\prod\config
+  logs_root: C:\xtquant-mcp-example\instance\prod\logs
+  state_root: C:\xtquant-mcp-example\instance\prod\state
+  artifact_root: C:\xtquant-mcp-example\instance\prod\artifacts
+
+bundle:
+  bundle_root: C:\xtquant-mcp-example\vendor\xtquant_250807
+  abi_tag: cp313-win_amd64
+  package_dir_name: xtquant
+  pth_filename: xtquant_vendor.pth
+
+qmt:
+  account_id: ""
+  qmt_exe: C:\QMT\XtMiniQmt.exe
+  qmt_userdata: C:\QMT\userdata_mini
+  credential_target: xtqmt/miniqmt/default
+  xtdata_host: 127.0.0.1
+  xtdata_port: 0
+
+transport:
+  bind_host: 127.0.0.1
+  bind_port: 8765
+  mcp_path: /mcp
+  health_path: /healthz
+  protocol_version_http: "2025-03-26"
+  allow_origin_hosts:
+    - 127.0.0.1
+    - localhost
+    - ::1
+
+audit:
+  enabled: true
+  call_log_root: C:\xtquant-mcp-example\instance\prod\artifacts\trade_gateway
+  call_log_name: trade_gateway_calls.jsonl
+
+trade:
+  account_id: ""
+  auto_account: true
+  output_dir: C:\xtquant-mcp-example\instance\prod\artifacts\trade_ops
+  state_dir: C:\xtquant-mcp-example\instance\prod\state\trade_ops
+  qmt_exe: C:\QMT\XtMiniQmt.exe
+  qmt_userdata: C:\QMT\userdata_mini
+  session_id: 100
+  session_candidates:
+    - 100
+    - 101
+    - 111
+  register_callback: true
+  connect_cooldown_seconds: 3.2
+  enforce_connect_precheck: true
+  require_up_queue_file: true
+  enable_derived_session_fallback: false
+  max_session_attempts: 12
+  connect_retries: 3
+  connect_retry_interval_seconds: 3.0
+  wake_wait_seconds: 30
+  require_connect_stage: true
+  require_subscribe_stage: true
+  require_snapshot_stage: true
+  snapshot_requires_position: false
+  allow_non_online_t0: false
+  idle_timeout_seconds: 20.0
+  enforce_trading_session: true
+  pretrade_connect_window: 5
+  pretrade_connect_threshold: 0.9
+  pretrade_connect_interval_seconds: 3.0
+  price_mode: l1_protect
+  risk_max_single_order_notional: 200000.0
+  risk_max_daily_notional: 2000000.0
+  risk_white_list: []
+  kill_switch_file: C:\xtquant-mcp-example\instance\prod\control\trade_kill_switch.flag
+
+login:
+  account_id: ""
+  qmt_exe: C:\QMT\XtMiniQmt.exe
+  qmt_userdata: C:\QMT\userdata_mini
+  credential_target: xtqmt/miniqmt/default
+  login_timeout_seconds: 45
+  startup_grace_seconds: 8
+  port_host: 127.0.0.1
+  port_num: 0

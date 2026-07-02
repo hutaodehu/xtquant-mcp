@@ -1,0 +1,82 @@
+server:
+  server_name: xtqmtDataGateway
+  server_version: 2.0.0a1
+  protocol_version: "2025-03-26"
+  enabled_tools:
+    - gateway.health
+    - calendar.resolve_trade_day
+    - integrity.plan
+    - sector.list
+    - sector.members_at
+    - sector.change_history
+    - market.snapshot.batch
+    - market.history.get_bars
+    - bulk.sync_job.submit
+    - bulk.sync_job.status
+    - bulk.sync_job.cancel
+    - artifact.manifest
+    - qlib.health.check
+    - qlib.acceptance.check
+  enabled_resources:
+    - xtdata://service/status
+    - xtdata://jobs/active
+    - xtdata://catalog/instruments
+    - xtdata://leases/active
+  enabled_prompts:
+    - data-backfill-plan
+    - data-download-triage
+    - xtdata-service-recover
+
+runtime:
+  python_home: C:\Python313\python.exe
+  venv_path: C:\xtquant-mcp-example\venv313
+
+paths:
+  config_root: C:\xtquant-mcp-example\instance\prod\config
+  logs_root: C:\xtquant-mcp-example\instance\prod\logs
+  state_root: C:\xtquant-mcp-example\instance\prod\state
+  artifact_root: C:\xtquant-mcp-example\instance\prod\artifacts
+
+bundle:
+  bundle_root: C:\xtquant-mcp-example\vendor\xtquant_250807
+  abi_tag: cp313-win_amd64
+  package_dir_name: xtquant
+  pth_filename: xtquant_vendor.pth
+
+qmt:
+  account_id: ""
+  qmt_exe: C:\QMT\XtMiniQmt.exe
+  qmt_userdata: C:\QMT\userdata_mini
+  credential_target: xtqmt/miniqmt/default
+  xtdata_host: 127.0.0.1
+  xtdata_port: 0
+
+transport:
+  bind_host: 127.0.0.1
+  bind_port: 8766
+  mcp_path: /mcp
+  health_path: /healthz
+  protocol_version_http: "2025-03-26"
+  allow_origin_hosts:
+    - 127.0.0.1
+    - localhost
+    - ::1
+
+audit:
+  enabled: true
+  call_log_root: C:\xtquant-mcp-example\instance\prod\artifacts\data_gateway
+  call_log_name: data_gateway_calls.jsonl
+
+data:
+  jobs_root: C:\xtquant-mcp-example\instance\prod\state\data_jobs
+  subscriptions_root: C:\xtquant-mcp-example\instance\prod\state\subscriptions
+  download_root: C:\xtquant-mcp-example\instance\prod\artifacts\data_downloads
+  plans_root: C:\xtquant-mcp-example\instance\prod\artifacts\data_plans
+  cache_root: C:\xtquant-mcp-example\instance\prod\artifacts\data_cache
+  metadata_path: C:\xtquant-mcp-example\instance\prod\artifacts\data_cache\integrity_state.json
+  windows_qlib_root: C:\xtquant-mcp-example\qlib_data\xtdata_export_local
+  wsl_qlib_root: /opt/xtquant-mcp-example/qlib_data/xtdata_export_local
+  wsl_distro_name: ""
+  stale_job_seconds: 300
+  max_concurrent_jobs: 1
+  max_query_symbols: 200
